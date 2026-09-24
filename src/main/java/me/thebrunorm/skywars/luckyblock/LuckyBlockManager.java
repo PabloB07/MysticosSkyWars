@@ -187,10 +187,13 @@ public class LuckyBlockManager {
 				if (loc == null || loc.getWorld() == null)
 					continue;
 				if (loc.getBlock().getType() != this.blockMaterial) {
+					// Auto-reparacion: la copia del mundo no trae el bloque
+					// (backup desactualizado o bloque consumido); el registro
+					// manda y se coloca de nuevo.
+					loc.getBlock().setType(this.blockMaterial, false);
 					Skywars.get().sendDebugMessage(
-							"Registered luckyblock missing in world at %s (expected %s)", loc,
-							this.blockMaterial);
-					continue;
+							"Placed missing registered luckyblock for map %s at %s",
+							arena.getMap().getName(), loc.toVector());
 				}
 				track(loc);
 				tracked++;
