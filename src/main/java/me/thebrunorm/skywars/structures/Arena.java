@@ -13,7 +13,6 @@ import me.thebrunorm.skywars.managers.ArenaManager;
 import me.thebrunorm.skywars.managers.ChestManager;
 import me.thebrunorm.skywars.managers.MapManager;
 import me.thebrunorm.skywars.singletons.*;
-import mrblobman.sounds.Sounds;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -206,12 +205,8 @@ public class Arena {
 
 					for (final SkywarsUser player : Arena.this.getUsers()) {
 
-						final String sound = Skywars.config.getString("sounds.countdown");
-						final String[] splitted = sound.split(";");
-						player.getPlayer().playSound(player.getPlayer().getLocation(),
-								Sounds.valueOf(splitted[0]).bukkitSound(),
-								splitted.length > 1 ? Float.parseFloat(splitted[1]) : 1,
-								splitted.length > 2 ? Float.parseFloat(splitted[2]) : 1);
+						SkywarsUtils.playSound(player.getPlayer(),
+								Skywars.config.getString("sounds.countdown"));
 
 						for (final Object object : Skywars.langConfig.getList("countdown")) {
 							@SuppressWarnings("unchecked") final HashMap<Object, Object> hash = (HashMap<Object, Object>) object;
@@ -688,12 +683,7 @@ public class Arena {
 			for (final SkywarsUser players : this.getUsers()) {
 				players.getPlayer().sendMessage(MessageUtils.getFormattedMessage("LEAVE", player.getPlayer(), this, player,
 						player.getPlayer().getName(), this.getUsers().size(), this.map.getMaxPlayers()));
-				final String sound = Skywars.config.getString("sounds.leave");
-				final String[] splitted = sound.split(";");
-				players.getPlayer().playSound(players.getPlayer().getLocation(),
-						Sounds.valueOf(splitted[0]).bukkitSound(),
-						splitted.length > 1 ? Float.parseFloat(splitted[1]) : 1,
-						splitted.length > 2 ? Float.parseFloat(splitted[2]) : 1);
+				SkywarsUtils.playSound(players.getPlayer(), Skywars.config.getString("sounds.leave"));
 			}
 		}
 
