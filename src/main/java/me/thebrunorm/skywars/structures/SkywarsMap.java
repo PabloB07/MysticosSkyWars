@@ -180,6 +180,11 @@ public class SkywarsMap {
 		return this.worldName;
 	}
 
+	/** Setter plano sin efectos (no copia nada, solo fija el campo). */
+	public void setWorldNameField(String name) {
+		this.worldName = name;
+	}
+
 	public HashMap<Integer, Vector> getSpawns() {
 		return this.spawns;
 	}

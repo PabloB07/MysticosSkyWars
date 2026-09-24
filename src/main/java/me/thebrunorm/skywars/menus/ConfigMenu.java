@@ -22,10 +22,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,57 +190,68 @@ public class ConfigMenu implements Listener {
 		}
 
 		if (name.equals(MessageUtils.color(saveWorld))) {
-			Path worldsPath = Skywars.get().getDataFolder().toPath().resolve("worlds").toAbsolutePath().normalize();
-			Path newFolder = worldsPath.resolve(currentMap.getName()).normalize();
-			if (newFolder.toFile().exists()) {
-				String backupWorldName = currentMap.getName() + "_old" + System.currentTimeMillis();
-				Path oldWorldsPath = Skywars.get().getDataFolder().toPath().resolve("old_worlds").toAbsolutePath().normalize();
-				if (!oldWorldsPath.toFile().exists())
-					if (!oldWorldsPath.toFile().mkdirs())
-						player.sendMessage("Could not create old_worlds directory: " + oldWorldsPath.toAbsolutePath());
-				Path worldBackup = oldWorldsPath.resolve(backupWorldName).toAbsolutePath().normalize();
+			// El backup debe vivir en worlds/<worldName> (ahi lo busca Arena.getWorld()).
+			// Files.copy NO copia directorios recursivamente: se usa FileUtils.
+			String targetName = currentMap.getWorldName();
+			if (targetName == null || targetName.isEmpty()) {
+				targetName = currentMap.getName();
+				currentMap.setWorldNameField(targetName);
+				currentMap.getConfig().set("world", targetName);
+				currentMap.saveConfig();
+			}
+
+			final File backupFolder = new File(Skywars.worldsPath, targetName);
+			if (backupFolder.isDirectory()) {
+				final File oldWorlds = new File(Skywars.get().getDataFolder(), "old_worlds");
+				if (!oldWorlds.isDirectory() && !oldWorlds.mkdirs()) {
+					player.sendMessage("Could not create old_worlds directory.");
+					return;
+				}
+				final File moved = new File(oldWorlds, targetName + "_old" + System.currentTimeMillis());
 				try {
-					Files.move(newFolder, worldBackup, StandardCopyOption.REPLACE_EXISTING);
-				} catch (IOException e) {
-					player.sendMessage("Error moving world folder: " + e.getMessage());
-					player.sendMessage("\nCould not move world\nFrom: "
-							+ newFolder + "\nTo: " + worldBackup);
+					org.apache.commons.io.FileUtils.moveDirectory(backupFolder, moved);
+					player.sendMessage("Previous backup moved to old_worlds/" + moved.getName());
+				} catch (final IOException e) {
+					player.sendMessage("Error backing up previous world: " + e.getMessage());
+					return;
 				}
 			}
 
-			World currentWorld = currentArena.getWorld();
+			final World currentWorld = currentArena.getWorld();
+			if (currentWorld == null) {
+				player.sendMessage("Arena world is not loaded, nothing to save.");
+				return;
+			}
 
 			player.sendMessage("Teleporting any players inside the world outside of it...");
-			for (final Player p : currentWorld.getPlayers())
+			for (final Player p : new ArrayList<>(currentWorld.getPlayers()))
 				SkywarsUtils.teleportPlayerLobbyOrLastLocation(p, true);
 
-			currentWorld.save();
-			player.sendMessage("Saved the world for arena: " + currentMap.getName());
-
-			/*
+			final File worldFolder = currentWorld.getWorldFolder();
 			if (!Bukkit.unloadWorld(currentWorld, true)) {
-				player.sendMessage("Could not unload world :(");
+				player.sendMessage("Could not unload world, aborting save (files may be locked).");
 				return;
 			}
 			player.sendMessage("Unloaded the world for arena: " + currentMap.getName());
-			*/
 
-			File worldFolder = currentWorld.getWorldFolder();
-			Path worldPath = Paths.get(worldFolder.getAbsolutePath()).normalize();
-
-			if (!worldFolder.isDirectory()) {
-				player.sendMessage("The world folder does not exist or is not a directory: " + worldPath);
+			try {
+				org.apache.commons.io.FileUtils.copyDirectory(worldFolder, backupFolder);
+				// uid/session frescos en cada copia que se cree desde este backup
+				new File(backupFolder, "uid.dat").delete();
+				new File(backupFolder, "session.lock").delete();
+			} catch (final IOException e) {
+				player.sendMessage("Error copying world folder: " + e.getMessage());
+				player.sendMessage("From: " + worldFolder + " To: " + backupFolder);
 				return;
 			}
 
-			try {
-				Files.copy(worldPath, newFolder, StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				player.sendMessage("Error moving world folder: " + e.getMessage());
-				player.sendMessage("\nCould not move world\nFrom: "
-						+ worldPath + "\nTo: " + newFolder);
-			}
+			player.sendMessage(MessageUtils.color("&aWorld saved as backup &b%s &apara el mapa &b%s.",
+					targetName, currentMap.getName()));
 
+			// Recrear la arena sobre una copia fresca del backup recien guardado
+			ArenaManager.removeArena(currentArena);
+			currentArenas.put(player, ArenaManager.getArenaByMap(currentMap, true));
+			UpdateInventory(player);
 			return;
 		}
 
