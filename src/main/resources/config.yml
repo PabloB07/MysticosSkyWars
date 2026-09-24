@@ -1,7 +1,7 @@
 # MSkyWars configuration file (Paper 1.21.x)
 
-# the language used for the messages (lang folder)
-locale: en
+# the language used for the messages (lang folder: en, es_cl)
+locale: es_cl
 
 # chat prefixes (usa %s para el nombre MSkyWars en formatos personalizados)
 prefix: "&8[&b&lMSkyWars&8] &7"
