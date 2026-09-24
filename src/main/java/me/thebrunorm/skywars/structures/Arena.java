@@ -84,8 +84,13 @@ public class Arena {
 
 		final SkywarsTeam team = this.getNextFreeTeamOrCreateIfItDoesntExist();
 
-		final Location spawn = this.getVectorInArena(this.getSpawn(team.getNumber()));
-		if (spawn == null) {
+		final Vector spawnVector = this.getSpawn(team.getNumber());
+		if (spawnVector == null) {
+			player.sendMessage(String.format("spawn %s of arena %s not set", team.getNumber(), this.map.getName()));
+			return false;
+		}
+		final Location spawn = this.getVectorInArena(spawnVector);
+		if (spawn == null || spawn.getWorld() == null) {
 			player.sendMessage(String.format("spawn %s of arena %s not set", team.getNumber(), this.map.getName()));
 			return false;
 		}
@@ -741,6 +746,8 @@ public class Arena {
 	}
 
 	public Location getVectorInArena(Vector vector) {
+		if (vector == null)
+			return null;
 		final World world = this.getWorld();
 		final Location loc = new Location(world, 0, 0, 0);
 		return new Location(world, vector.getBlockX() + loc.getBlockX(), vector.getBlockY() + loc.getBlockY(),
