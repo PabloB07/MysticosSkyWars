@@ -249,6 +249,47 @@ countdown:
     color: c
     range: 5-1
 
+menu_titles:
+  main_menu: "&b&lMSkyWars"
+  maps: "&aMapas"
+  kits: "&aKits"
+
+kits:
+  bought: "&bCompraste el kit &e{0}"
+  owned: "&a¡Ya tienes este kit!"
+  unowned: "&c¡No tienes este kit!"
+  selected: "&aKit elegido: &e{0}"
+  select_error: "&cError: &7no se pudo elegir el kit"
+  current_selected: "&6Kit elegido"
+  current_free: "&a¡Este kit es gratis!"
+  click_select: "&e¡Clic para elegir!"
+  click_purchase: "&a¡Clic para comprar!"
+  price_good: "&aPrecio: {0}"
+  price_bad: "&cPrecio: {0}"
+  your_money_more: "&6Tu dinero: &a{0}"
+  your_money_less: "&6Tu dinero: &c{0}"
+
+console:
+  update_finished: "&6El plugin se actualizó y se desactivó."
+  stopping_arenas: "&6Deteniendo arenas..."
+  error_config: "¡No se pudieron cargar los archivos de configuración!"
+  disabling_plugin: "Desactivando plugin."
+  server_version: "&bVersión del servidor: &e{0} (&a{1}&e)"
+  plugin_enabled: "&aPlugin activado: &bv{0}"
+  holograms:
+    not_found: "&c¡No se encontró plugin de hologramas compatible!"
+    hooked: "&eConectado a &a{0}&e!"
+  command:
+    loading: "&eCargando comando &a{0}&e..."
+    skipping: "&7Omitiendo comando &c{0}&7..."
+  kits:
+    error:
+      folder: "&cNo se pudo crear la carpeta de kits: &6{0}"
+      icon: "&cNo se pudo cargar el ícono del kit: &6{0}"
+      loaded_single: "&eKit cargado: &a{0}"
+      finished_loading: "&aSe cargaron &b{0} &akits."
+      default: "Creando kit por defecto."
+
 luckyblock:
   opened: "&b&lMSkyWars &7» {0}"
   swapped: "&b&lMSkyWars &7» ¡&e{0} &7intercambió posiciones contigo!"
