@@ -8,6 +8,8 @@ import me.thebrunorm.skywars.handlers.SkywarsActionbar;
 import me.thebrunorm.skywars.handlers.SkywarsScoreboard;
 import me.thebrunorm.skywars.handlers.SkywarsTabList;
 import me.thebrunorm.skywars.holograms.*;
+import me.thebrunorm.skywars.luckyblock.LuckyBlockListener;
+import me.thebrunorm.skywars.luckyblock.LuckyBlockManager;
 import me.thebrunorm.skywars.managers.ChestManager;
 import me.thebrunorm.skywars.managers.MapManager;
 import me.thebrunorm.skywars.managers.SignManager;
@@ -68,6 +70,7 @@ public class Skywars extends JavaPlugin {
 	boolean updated = false;
 	ChestManager chestManager = new ChestManager();
 	MapManager mapManager = new MapManager();
+	LuckyBlockManager luckyBlockManager = new LuckyBlockManager();
 	BukkitTask taskUpdate;
 	private String prefix;
 	private String debugPrefix;
@@ -93,6 +96,7 @@ public class Skywars extends JavaPlugin {
 
 		this.loadConfig();
 		this.loadPrefixes();
+		this.luckyBlockManager.load();
 		this.mapManager.loadMaps();
 		this.chestManager.loadChests();
 		this.signManager.loadSigns();
@@ -113,8 +117,17 @@ public class Skywars extends JavaPlugin {
 	}
 
 	void loadPrefixes() {
-		prefix = MessageUtils.color(String.format(getConfig().getString("prefix", "&6[&e%s&6]&e"), this.name));
-		debugPrefix = MessageUtils.color(String.format(getConfig().getString("debug_prefix", "&7[&c%s&7]&e"), this.name));
+		prefix = MessageUtils.color(formatPrefix(getConfig().getString("prefix"), "&8[&b&lMSkyWars&8] &7"));
+		debugPrefix = MessageUtils.color(formatPrefix(getConfig().getString("debug_prefix"), "&8[&7MSkyWars-Debug&8] &7"));
+	}
+
+	String formatPrefix(String configured, String def) {
+		if (configured == null || configured.isEmpty())
+			return def;
+		// compatibilidad con el formato antiguo "&6[&e%s&6]&e"
+		if (configured.contains("%s"))
+			return String.format(configured, "MSkyWars");
+		return configured;
 	}
 
 	public void loadKits() {
@@ -197,7 +210,8 @@ public class Skywars extends JavaPlugin {
 		if (config.getBoolean("end_portal_joins_random_game"))
 			pluginManager.registerEvents(new EndPortalJoinsRandomGame(), this);
 
-		final Listener[] listeners = {new InteractEvent(), new Events(), new GamesMenu(), new MapMenu(),
+		final Listener[] listeners = {new InteractEvent(), new Events(), new LuckyBlockListener(),
+				new GamesMenu(), new MapMenu(),
 				new KitsMenu(), new ConfigMenu(), new GameOptionsMenu(),
 				new PlayerInventoryManager(),};
 		for (final Listener listener : listeners) {
@@ -267,6 +281,7 @@ public class Skywars extends JavaPlugin {
 		this.mapManager.loadMaps();
 		this.mapManager.loadWorlds();
 		this.chestManager.loadChests();
+		this.luckyBlockManager.load();
 		this.signManager.loadSigns();
 		this.loadKits();
 
@@ -330,6 +345,10 @@ public class Skywars extends JavaPlugin {
 
 	public ChestManager getChestManager() {
 		return this.chestManager;
+	}
+
+	public LuckyBlockManager getLuckyBlockManager() {
+		return this.luckyBlockManager;
 	}
 
 	public MapManager getMapManager() {

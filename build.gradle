@@ -2,25 +2,31 @@
 
 plugins {
     id 'java'
-    id 'com.diffplug.spotless' version '6.25.0'
+    id 'com.diffplug.spotless' version '7.0.2'
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(25)
     }
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
     mavenCentral()
 
     maven {
+        name = "papermc"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
         name = "spigotmc-repo"
         url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     }
     maven {
         name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     maven {
         name = "jitpack"
@@ -31,40 +37,50 @@ repositories {
         url = "https://repo.codemc.io/repository/maven-public/"
     }
     maven {
-        name = "papermc"
-        url = "https://repo.papermc.io/repository/maven-public/"
-    }
-    maven {
         name = "placeholderapi"
         url = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
     }
 }
 
 dependencies {
-    implementation("commons-io:commons-io:2.16.1")
+    implementation("commons-io:commons-io:2.18.0")
 
-    // Spigot
-    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
+    // Paper 1.21.x (tambien compatible con Spigot 1.21.x)
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+
+    // XMaterial es una clase propia (com.cryptomorin.xseries) sin parseo de
+    // versiones: XSeries 9.x revienta en Paper 26.x al iniciar. Sin dependencia.
 
     // Logging
-    implementation("org.slf4j:log4j-over-slf4j:2.0.6")
+    implementation("org.slf4j:log4j-over-slf4j:2.0.16")
 
-    // Testing
-    testImplementation("com.github.seeseemelk:MockBukkit-v1.19:2.29.0")
+    // Testing (sin tests en el proyecto; anadir MockBukkit 1.21 aqui cuando se creen)
+    // testImplementation("org.mockbukkit:mockbukkit-v1.21:4.18.0")
 
-    // Plugin APIs (provided)
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT")
-    compileOnly("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9")
-    compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.6")
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    // Plugin APIs (provided; sin bukkit transitivo para no chocar con paper-api)
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude(group: "org.bukkit", module: "bukkit")
+    }
+    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT") {
+        exclude(group: "org.bukkit", module: "bukkit")
+    }
+    compileOnly("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9") {
+        exclude(group: "org.bukkit", module: "bukkit")
+    }
+    compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.6") {
+        exclude(group: "org.bukkit", module: "bukkit")
+    }
+    compileOnly("me.clip:placeholderapi:2.11.6") {
+        exclude(group: "org.bukkit", module: "bukkit")
+    }
 
-    // NBT library
+    // NBT library (schematics)
     implementation("com.github.Querz:NBT:6.1")
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = encoding
+    options.release = 25
 }
 
 processResources {
@@ -100,6 +116,14 @@ tasks.register('moveJar', Copy) {
 tasks.jar {
     archiveBaseName.set(project.name)
     archiveVersion.set("")
+
+    // Jar autocontenido: empaqueta las dependencias implementation
+    // (XSeries, NBT, commons-io...) sin incluir paper-api (compileOnly).
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
 
     finalizedBy tasks.moveJar
 }

@@ -171,16 +171,21 @@ public enum Sounds {
 		if (this.resolvedSound != null)
 			return this.resolvedSound;
 
-		try {
-			return this.resolvedSound = Sound.valueOf(this.post19sound);
-		} catch (final IllegalArgumentException e) {
-			// Try 1.8 sound
+		final String[] candidates = {this.post19sound, this.testsound, this.pre19sound};
+		for (final String candidate : candidates) {
+			if (candidate == null)
+				continue;
 			try {
-				return this.resolvedSound = Sound.valueOf(this.pre19sound);
-			} catch (final IllegalArgumentException ee) {
-				// try test sound
-				return this.resolvedSound = Sound.valueOf(this.testsound);
+				return this.resolvedSound = Sound.valueOf(candidate);
+			} catch (final IllegalArgumentException ignored) {
+				// probar el siguiente nombre
 			}
+		}
+		// Fallback garantizado: nunca devuelve null ni lanza NPE en versiones nuevas.
+		try {
+			return this.resolvedSound = Sound.valueOf("BLOCK_NOTE_BLOCK_PLING");
+		} catch (final RuntimeException e) {
+			return this.resolvedSound = Sound.values()[0];
 		}
 	}
 }

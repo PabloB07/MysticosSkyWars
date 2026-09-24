@@ -87,16 +87,6 @@ public enum SkywarsCaseCreator {
 		for (int[] relative : offsets) {
 			Block block = location.getBlock().getRelative(relative[0], relative[1], relative[2]);
 			block.setType(material.parseMaterial());
-
-			if (XMaterial.isNewVersion()) continue;
-
-			try {
-				block.getClass()
-						.getMethod("setData", byte.class)
-						.invoke(block, material.getData());
-			} catch (Exception e) {
-				Skywars.get().getLogger().log(Level.SEVERE, "Could not set block data for case", e);
-			}
 		}
 	}
 }

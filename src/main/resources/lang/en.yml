@@ -65,7 +65,7 @@ items:
       - "&7Right-click to teleport to players"
 
 arena_join:
-  title: "&eSkyWars"
+  title: "&eMSkyWars"
   subtitle: "&cInsane Mode"
   message: ""
 
@@ -87,7 +87,7 @@ won:
 actionbar:
   waiting: '&eCurrent kit: &a%kit%'
 
-RELOADED: "&aSkywars configuration reloaded."
+RELOADED: "&aMSkyWars configuration reloaded."
 NO_MAP: "&cNo map."
 NO_PERMISSION: "&cNo permission."
 NOT_JOINED: "&cNot joined."
@@ -120,7 +120,7 @@ PLAYERS_REMAINING: "&c{0} &eplayers remaining"
 startLines:
   - "&a&l---------------------------------------------"
   - ""
-  - "                                  &f&lSkyWars"
+  - "                                  &f&lMSkyWars"
   - ""
   - "    &e&lGather resources and equipment on your island"
   - "      &e&lin order to eliminate every other player."
@@ -153,13 +153,13 @@ chest_holograms:
 tabList:
   lobby:
     header:
-      - "&b&lSKYWARS"
+      - "&b&lMSKYWARS"
     footer:
       - "&e%url%"
   arena:
     player:
       header:
-        - "&a&lSkyWars"
+        - "&a&lMSkyWars"
         - "&eCurrent kit: &b%kit%"
         - "&eMap: &b%map%"
       footer:
@@ -167,7 +167,7 @@ tabList:
         - "&eNext event: &b%event%"
     spectator:
       header:
-        - "&a&lSkyWars"
+        - "&a&lMSkyWars"
         - "&bYou're spectating"
         - "&eMap: &b%map%"
       footer:
@@ -175,14 +175,14 @@ tabList:
         - "&eNext event: &b%event%"
     intermission:
       header:
-        - "&a&lSkywars"
+        - "&a&lMSkyWars"
         - "&eMap: &b%map%"
       footer:
         - ""
         - "%status%"
 
 scoreboard:
-  title: '&e&lSkyWars'
+  title: '&b&lMSkyWars'
 
   lobby:
     - '&7%date%'
@@ -246,7 +246,7 @@ countdown:
     range: 5-1
 
 menu_titles:
-  main_menu: "&aSkywars"
+  main_menu: "&aMSkyWars"
   maps: "&aMaps"
   kits: "&aKits"
 
@@ -282,6 +282,46 @@ console:
     error:
       folder: "&cCould not create kits folder: &6{0}"
       icon: "&cCould not load icon item of kit: &6{0}"
-    loaded_single: "&eLoaded kit: &a{0}"
-    finished_loading: "&aFinished loading &b{0} &akits."
-    default: "Setting up default kit."
+      loaded_single: "&eLoaded kit: &a{0}"
+      finished_loading: "&aFinished loading &b{0} &akits."
+      default: "Setting up default kit."
+luckyblock:
+  opened: "&b&lMSkyWars &7» {0}"
+  swapped: "&b&lMSkyWars &7» &e{0} &7swapped positions with you!"
+  epic_broadcast: "&b&lMSkyWars &7» &e{0} &6got &e&l{1}&6 from a LuckyBlock!"
+  mood_good: "&aGood luck!"
+  mood_bad: "&cBad luck..."
+  mood_fun: "&eLuckyBlock!"
+  mood_epic: "&6&lEPIC!"
+  rewards:
+    DIAMOND_GEAR: "&bDiamond gear"
+    IRON_KIT: "&fIron kit"
+    GOLDEN_FEAST: "&6Golden feast"
+    PEARL_PARTY: "&aPearl party"
+    TOTEM_GIFT: "&eTotem gift"
+    BONUS_CHEST: "&6Bonus chest"
+    ELIXIR: "&dMagic elixir"
+    GHOST: "&7Ghost mode"
+    BERSERKER: "&cBerserker"
+    SECOND_WIND: "&aSecond wind"
+    VENOM: "&2Venom"
+    DARKNESS: "&8Darkness"
+    ZOMBIE_SWARM: "&2Zombie swarm"
+    CREEPER_HUG: "&aCreeper hug"
+    BLAZE_PAIR: "&6Blazing pair"
+    WITCH_HOUR: "&5Witch hour"
+    GOLEM_GUARDIAN: "&bGolem guardian"
+    RICH_TOWER: "&bRich tower"
+    OBSIDIAN_CAGE: "&8Obsidian cage"
+    COBWEB_TRAP: "&fCobweb trap"
+    LAVA_TRAP: "&cLava trap"
+    TRAPDOOR: "&eThe floor disappears"
+    TNT_SURPRISE: "&cTNT surprise"
+    TNT_RAIN: "&cTNT rain"
+    ANVIL_RAIN: "&8Anvil rain"
+    WRATH_LIGHTNING: "&eWrath lightning"
+    EMPTY_TROLL: "&7Empty... or not?"
+    JACKPOT: "&6&lJACKPOT"
+    WILD_TELEPORT: "&dWild teleport"
+    SWAP: "&ePosition swap"
+    MOON_LAUNCH: "&bTo the moon"

@@ -299,12 +299,12 @@ public class Arena {
 		player.setGameMode(GameMode.ADVENTURE);
 
 		for (final Player players : Bukkit.getOnlinePlayers()) {
-			players.hidePlayer(player);
+			players.hidePlayer(Skywars.get(), player);
 		}
 
 		for (final SkywarsUser users : this.getSpectators()) {
-			users.player.showPlayer(player);
-			player.showPlayer(users.player);
+			users.player.showPlayer(Skywars.get(), player);
+			player.showPlayer(Skywars.get(), users.player);
 		}
 
 		// give spectator items (player tracker, spectator settings, leave item)
@@ -614,6 +614,7 @@ public class Arena {
 
 	public void clear(boolean remove) {
 		this.cancelTimer();
+		Skywars.get().getLuckyBlockManager().cleanupArena(this);
 		Skywars.get().sendDebugMessage("Clearing arena for map " + this.map.getName());
 		for (final SkywarsUser player : this.getUsers()) {
 			this.exitPlayer(player);
@@ -823,6 +824,10 @@ public class Arena {
 		this.cancelTimer();
 		this.startTimerAndSetStatus(ArenaStatus.PLAYING);
 		this.fillChests();
+		Skywars.get().getLuckyBlockManager().spawnInArena(this);
+		final int luckyAmount = Skywars.get().getLuckyBlockManager().isEnabled()
+				? Skywars.get().getLuckyBlockManager().getGiveOnStart()
+				: 0;
 		this.applyGameSettings();
 		for (final Vector spawn : this.map.getSpawns().values()) {
 			createCase(this.getVectorInArena(spawn), XMaterial.AIR);
@@ -835,6 +840,10 @@ public class Arena {
 				for (final ItemStack item : kit.getItems()) {
 					player.getPlayer().getInventory().addItem(item);
 				}
+			}
+			if (luckyAmount > 0) {
+				player.getPlayer().getInventory()
+						.addItem(Skywars.get().getLuckyBlockManager().createItem(luckyAmount));
 			}
 			player.getPlayer().sendMessage(MessageUtils.get("arena_start.message"));
 			Skywars.get().NMS().sendTitle(player.getPlayer(), MessageUtils.get("arena_start.title"),
@@ -1071,7 +1080,7 @@ public class Arena {
 			return;
 		final Block block = chest.getBlock();
 		final String name = Skywars.get().getHologramController().createHologram(
-				"Skywars_chest_" + block.getLocation().getBlockX() + "_" + block.getLocation().getBlockY() + "_"
+				"MSkyWars_chest_" + block.getLocation().getBlockX() + "_" + block.getLocation().getBlockY() + "_"
 						+ block.getLocation().getBlockZ() + "_" + Instant.now().toEpochMilli(),
 				block.getLocation().add(new Vector(0.5, 2, 0.5)), "");
 		this.chestHolograms.put(chest, name);

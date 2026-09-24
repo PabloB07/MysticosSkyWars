@@ -6,7 +6,7 @@ import me.thebrunorm.skywars.Skywars;
 import me.thebrunorm.skywars.managers.ArenaManager;
 import me.thebrunorm.skywars.singletons.SkywarsUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.time.StopWatch;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -267,8 +267,7 @@ public class SkywarsMap {
 			Skywars.get().sendDebugMessage("Added chest from state for map %s at location: %s", this.getName(), vector);
 		}
 
-		StopWatch timer = new StopWatch();
-		timer.start();
+		final long timerStart = System.currentTimeMillis();
 
 		for (final Chunk chunk : arena.getAllChunksInMap()) {
 			for (int x = 0; x <= 15; x++) {
@@ -290,8 +289,8 @@ public class SkywarsMap {
 			}
 		}
 
-		timer.stop();
-		Skywars.get().sendDebugMessage("Calculated %s chests in %s", arena.getMap().getChests().size(), timer.getTime());
+		Skywars.get().sendDebugMessage("Calculated %s chests in %sms", arena.getMap().getChests().size(),
+				System.currentTimeMillis() - timerStart);
 
 		final YamlConfiguration config = arena.getMap().getConfig();
 

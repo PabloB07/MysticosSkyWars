@@ -8,7 +8,7 @@ softdepend:
   - PlaceholderAPI
   - HolographicDisplays
   - DecentHolograms
-api-version: 1.13
+api-version: "1.21"
 
 commands:
   skywars:

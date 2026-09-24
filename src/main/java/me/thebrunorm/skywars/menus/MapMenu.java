@@ -50,7 +50,7 @@ public class MapMenu implements Listener {
 
 			final ItemStack item = new ItemStack(XMaterial.FIREWORK_STAR.parseItem());
 			final ItemMeta meta = item.getItemMeta();
-			meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+			meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
 
 			meta.setDisplayName(MessageUtils.color("&a%s", map.getName()));
 			meta.setLore(lore);

@@ -1,0 +1,27 @@
+# MSkyWars - Configuracion de LuckyBlocks
+# Rompe un LuckyBlock en plena partida y recibe una sorpresa:
+# mobs, efectos, bloques, TNT, items, trampas y especiales.
+
+# Material del bloque LuckyBlock (cambialo solo si sabes lo que haces)
+block: SPONGE
+
+# Item que se entrega / coloca
+name: "&e&lLuckyBlock"
+lore:
+  - "&7Rompe este bloque para"
+  - "&7recibir una &esorpresa&7..."
+
+# Categorias activas (true/false)
+categories:
+  ITEMS: true
+  MOBS: true
+  EFFECTS: true
+  BLOCKS: true
+  TNT: true
+  TRAPS: true
+  SPECIAL: true
+
+# Anunciar la sorpresa con titulo en pantalla
+announce_title: true
+# Enviar mensaje a toda la arena cuando sale algo epico (JACKPOT, etc.)
+broadcast_epic: true

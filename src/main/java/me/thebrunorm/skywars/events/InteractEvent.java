@@ -81,7 +81,7 @@ public class InteractEvent implements Listener {
 
 	void handleArenaInteraction(PlayerInteractEvent event, Player player, Arena arena) {
 		final SkywarsUser swp = arena.getUser(player);
-		final ItemStack item = player.getItemInHand();
+		final ItemStack item = player.getInventory().getItemInMainHand();
 		final ItemMeta meta = item.getItemMeta();
 		if (meta == null) return;
 

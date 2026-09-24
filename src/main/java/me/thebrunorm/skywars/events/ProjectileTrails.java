@@ -4,8 +4,10 @@ package me.thebrunorm.skywars.events;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -34,8 +36,11 @@ public class ProjectileTrails implements Listener {
 		this.tasks.put(e.getEntity(), new BukkitRunnable() {
 			@Override
 			public void run() {
+				if (entity.isDead() || !entity.isValid())
+					return;
 				final Location l = entity.getLocation();
-				Skywars.get().NMS().sendParticles(l, "COLOURED_DUST", 2);
+				l.getWorld().spawnParticle(Particle.DUST, l, 2,
+						new Particle.DustOptions(Color.AQUA, 1.0f));
 			}
 		}.runTaskTimer(Skywars.get(), 0L, 1L));
 	}

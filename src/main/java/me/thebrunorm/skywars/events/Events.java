@@ -221,8 +221,9 @@ public class Events implements Listener {
 
 	// prevent spectators from picking up items
 	@EventHandler
-	void onPickup(PlayerPickupItemEvent event) {
-		final Player player = event.getPlayer();
+	void onPickup(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
 		final Arena arena = Skywars.get().getPlayerArena(player);
 		if (arena == null)
 			return;

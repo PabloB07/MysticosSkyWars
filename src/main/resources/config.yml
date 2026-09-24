@@ -1,7 +1,11 @@
-# Skywars configuration file
+# MSkyWars configuration file (Paper 1.21.x)
 
 # the language used for the messages (lang folder)
 locale: en
+
+# chat prefixes (usa %s para el nombre MSkyWars en formatos personalizados)
+prefix: "&8[&b&lMSkyWars&8] &7"
+debug_prefix: "&8[&7MSkyWars-Debug&8] &7"
 
 # the url for displaying the %url% placeholder (scoreboard)
 url: "www.example.com"
@@ -17,18 +21,21 @@ tabListEnabled: true
 signsEnabled: true
 messageSounds:
   enabled: true
-  sound: ITEM_PICKUP
+  sound: ENTITY_ITEM_PICKUP
 disableWeather: true
 
-sounds: # sound name; volume; pitch
-  join: HORSE_ARMOR; .75; .75
-  leave: ITEM_PICKUP; 1; 0.1
-  countdown: NOTE_STICKS; 3; 1
+sounds: # sound name; volume; pitch (nombres modernos 1.21.x o alias clasicos)
+  join: ENTITY_HORSE_ARMOR; .75; .75
+  leave: ENTITY_ITEM_PICKUP; 1; 0.1
+  countdown: BLOCK_NOTE_BLOCK_HAT; 3; 1
   start:
-    - NOTE_PLING; 0.5; 1
-    - PORTAL_TRIGGER; 0.5; 5
-  REFILL: LEVEL_UP; 1; 1
-  ENDER_DRAGON: ENDERDRAGON_GROWL; 1; 1
+    - BLOCK_NOTE_BLOCK_PLING; 0.5; 1
+    - BLOCK_PORTAL_TRIGGER; 0.5; 5
+  REFILL: ENTITY_PLAYER_LEVELUP; 1; 1
+  ENDER_DRAGON: ENTITY_ENDERDRAGON_GROWL; 1; 1
+  LUCKYBLOCK_GOOD: ENTITY_PLAYER_LEVELUP; 1; 1.5
+  LUCKYBLOCK_BAD: ENTITY_GENERIC_EXPLODE; 1; 0.8
+  LUCKYBLOCK_MOB: ENTITY_CREEPER_PRIMED; 1; 1
 
 end_portal_joins_random_game: true
 
@@ -82,6 +89,14 @@ economy:
 souls:
   enabled: true
   kill: 1
+
+# LuckyBlocks de MSkyWars (ver luckyblocks.yml para la lista de sorpresas)
+luckyblocks:
+  enabled: true
+  # bloques que aparecen en cada isla al empezar la partida
+  per_island: 3
+  # luckyblocks extra en el inventario al empezar (0 = ninguno)
+  give_on_start: 0
 
 # this is used to format money
 decimalFormat: "0.#"

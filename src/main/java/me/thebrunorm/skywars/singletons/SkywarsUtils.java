@@ -21,6 +21,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
@@ -65,9 +66,9 @@ public class SkywarsUtils {
 					.replaceAll(getVariableCode("totalwins"), String.valueOf(Skywars.get().getPlayerTotalWins(player)))
 					.replaceAll(getVariableCode("totalkills"),
 							String.valueOf(Skywars.get().getPlayerTotalKills(player)))
-					.replaceAll(getVariableCode("totaldeaths"),
-							String.valueOf(Skywars.get().getPlayerTotalDeaths(player)))
-					.replaceAll(getVariableCode("kit"), Skywars.get().getPlayerKit(player).getDisplayName());
+				.replaceAll(getVariableCode("totaldeaths"),
+						String.valueOf(Skywars.get().getPlayerTotalDeaths(player)))
+				.replaceAll(getVariableCode("kit"), getPlayerKitDisplayName(player));
 		}
 
 		if (arena != null) {
@@ -94,6 +95,20 @@ public class SkywarsUtils {
 
 	public static String getVariableCode(String thing) {
 		return String.format("%%%s%%", thing);
+	}
+
+	/** Nombre del kit del jugador, o el texto "none" si aun no eligio ninguno. */
+	public static String getPlayerKitDisplayName(Player player) {
+		if (player == null)
+			return MessageUtils.get("none");
+		try {
+			final me.thebrunorm.skywars.structures.Kit kit = Skywars.get().getPlayerKit(player);
+			if (kit != null && kit.getDisplayName() != null)
+				return kit.getDisplayName();
+		} catch (final Exception ignored) {
+			// config de jugador ilegible: usar fallback
+		}
+		return MessageUtils.get("none");
 	}
 
 	public static String getUrl() {
@@ -170,13 +185,16 @@ public class SkywarsUtils {
 
 		// make visible
 		for (final Player players : Bukkit.getOnlinePlayers()) {
-			players.showPlayer(player);
+			players.showPlayer(Skywars.get(), player);
 		}
 
 		// clear inventory
 		player.getInventory().clear();
-		player.getEquipment().clear();
 		player.getInventory().setArmorContents(null);
+		player.getInventory().setItemInOffHand(null);
+		if (player.getEquipment() != null) {
+			player.getEquipment().clear();
+		}
 		player.updateInventory();
 
 		// clear player
@@ -184,8 +202,10 @@ public class SkywarsUtils {
 		player.setExp(0);
 		player.setLevel(0);
 		player.setFoodLevel(20);
+		if (player.getAttribute(Attribute.MAX_HEALTH) != null) {
+			player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
+		}
 		player.setHealth(20);
-		player.setMaxHealth(20);
 		player.setFlying(false);
 		player.setAllowFlight(false);
 		if (player.getFireTicks() > 0)
@@ -278,7 +298,7 @@ public class SkywarsUtils {
 	public static void spawnRandomFirework(Location location) {
 		if (location == null)
 			return;
-		final Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+		final Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK_ROCKET);
 		final FireworkMeta meta = firework.getFireworkMeta();
 		final FireworkEffect.Builder builder = FireworkEffect.builder();
 		builder.withTrail().withFlicker().with(FireworkEffect.Type.BALL_LARGE)
@@ -380,7 +400,23 @@ public class SkywarsUtils {
 
 	public static void playSound(Player player, String sound) {
 		final String[] splitted = sound.split(";");
-		player.playSound(player.getLocation(), Sounds.valueOf(splitted[0]).bukkitSound(),
+		org.bukkit.Sound bukkitSound = null;
+		try {
+			bukkitSound = Sounds.valueOf(splitted[0]).bukkitSound();
+		} catch (final IllegalArgumentException missing) {
+			// nombre moderno de sonido (1.21.x) usado directamente en la config
+			try {
+				bukkitSound = org.bukkit.Sound.valueOf(splitted[0]);
+			} catch (final IllegalArgumentException unknown) {
+				Skywars.get().sendDebugMessage("Unknown sound in config: %s", splitted[0]);
+				return;
+			}
+		}
+		if (bukkitSound == null) {
+			Skywars.get().sendDebugMessage("Unknown sound in config: %s", splitted[0]);
+			return;
+		}
+		player.playSound(player.getLocation(), bukkitSound,
 				splitted.length > 1 ? Float.parseFloat(splitted[1]) : 1,
 				splitted.length > 2 ? Float.parseFloat(splitted[2]) : 1);
 	}

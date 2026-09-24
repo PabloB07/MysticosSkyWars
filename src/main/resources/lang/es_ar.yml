@@ -64,7 +64,7 @@ items:
       - "&7Hacé clic derecho para teletransportarte hacia otros jugadores"
 
 arena_join:
-  title: "&eSkyWars"
+  title: "&eMSkyWars"
   subtitle: "&cModo Insano"
   message: ""
 
@@ -86,7 +86,7 @@ won:
 actionbar:
   waiting: '&eKit actual: &a%kit%'
 
-RELOADED: "&aConfiguración de Skywars recargada."
+RELOADED: "&aConfiguración de MSkyWars recargada."
 NO_MAP: "&cNo hay mapa."
 NO_PERMISSION: "&cNo tenés permisos."
 NOT_JOINED: "&c¡No estás unido!"
@@ -124,7 +124,7 @@ PLAYERS_REMAINING: "&c{0} &ejugadores restantes"
 startLines:
   - "&a&l---------------------------------------------"
   - ""
-  - "                                  &f&lSkyWars"
+  - "                                  &f&lMSkyWars"
   - ""
   - "    &e&lAgarrá recursos y equipamiento en tu isla"
   - "      &e&lpara eliminar a todos los otros jugadores."
@@ -157,13 +157,13 @@ chest_holograms:
 tabList:
   lobby:
     header:
-      - "&b&lSKYWARS"
+      - "&b&lMSKYWARS"
     footer:
       - "&e%url%"
   arena:
     player:
       header:
-        - "&a&lSkyWars"
+        - "&a&lMSkyWars"
         - "&eKit actual: &b%kit%"
         - "&eMapa: &b%map%"
       footer:
@@ -171,7 +171,7 @@ tabList:
         - "&eSiguiente evento: &b%event%"
     spectator:
       header:
-        - "&a&lSkyWars"
+        - "&a&lMSkyWars"
         - "&bEstás en modo espectador"
         - "&eMapa: &b%map%"
       footer:
@@ -179,14 +179,14 @@ tabList:
         - "&eSiguiente evento: &b%event%"
     intermission:
       header:
-        - "&a&lSkywars"
+        - "&a&lMSkyWars"
         - "&eMapa: &b%map%"
       footer:
         - ""
         - "%status%"
 
 scoreboard:
-  title: '&e&lSkyWars'
+  title: '&b&lMSkyWars'
 
   lobby:
     - '&7%date%'
@@ -248,3 +248,44 @@ countdown:
     subtitle: "&e¡Preparate para pelear!"
     color: c
     range: 5-1
+
+luckyblock:
+  opened: "&b&lMSkyWars &7» {0}"
+  swapped: "&b&lMSkyWars &7» ¡&e{0} &7intercambió posiciones con vos!"
+  epic_broadcast: "&b&lMSkyWars &7» ¡&e{0} &6consiguió &e&l{1}&6 en un LuckyBlock!"
+  mood_good: "&a¡Buena suerte!"
+  mood_bad: "&cMala suerte..."
+  mood_fun: "&e¡LuckyBlock!"
+  mood_epic: "&6&l¡ÉPICO!"
+  rewards:
+    DIAMOND_GEAR: "&bArmadura de diamante"
+    IRON_KIT: "&fKit de hierro"
+    GOLDEN_FEAST: "&6Festín dorado"
+    PEARL_PARTY: "&aFiesta de perlas"
+    TOTEM_GIFT: "&eTótem de regalo"
+    BONUS_CHEST: "&6Cofre bonus"
+    ELIXIR: "&dElixir mágico"
+    GHOST: "&7Modo fantasma"
+    BERSERKER: "&cBerserker"
+    SECOND_WIND: "&aSegundo aire"
+    VENOM: "&2Veneno"
+    DARKNESS: "&8Oscuridad"
+    ZOMBIE_SWARM: "&2Horda de zombis"
+    CREEPER_HUG: "&aAbrazo creeper"
+    BLAZE_PAIR: "&6Dúo de blazes"
+    WITCH_HOUR: "&5Hora de brujas"
+    GOLEM_GUARDIAN: "&bGólem guardián"
+    RICH_TOWER: "&bTorre de riquezas"
+    OBSIDIAN_CAGE: "&8Jaula de obsidiana"
+    COBWEB_TRAP: "&fTrampa de telarañas"
+    LAVA_TRAP: "&cTrampa de lava"
+    TRAPDOOR: "&eEl suelo desaparece"
+    TNT_SURPRISE: "&cSorpresa de TNT"
+    TNT_RAIN: "&cLluvia de TNT"
+    ANVIL_RAIN: "&8Lluvia de yunques"
+    WRATH_LIGHTNING: "&eIra del rayo"
+    EMPTY_TROLL: "&7Vacío... ¿o no?"
+    JACKPOT: "&6&lJACKPOT"
+    WILD_TELEPORT: "&dTeletransporte salvaje"
+    SWAP: "&eIntercambio de posición"
+    MOON_LAUNCH: "&bA la luna"

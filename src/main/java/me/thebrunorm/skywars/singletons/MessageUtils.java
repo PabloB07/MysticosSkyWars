@@ -43,6 +43,8 @@ public enum MessageUtils {
 
 	public static String resolve(String key) {
 		YamlConfiguration lang = Skywars.langConfig;
+		if (lang == null)
+			return null;
 		Object value = lang.get(key);
 		if (value instanceof List<?>)
 			return String.join("\n", lang.getStringList(key));

@@ -6,7 +6,6 @@ import me.thebrunorm.skywars.singletons.MessageUtils;
 import me.thebrunorm.skywars.singletons.SkywarsEconomy;
 import me.thebrunorm.skywars.structures.Kit;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -118,13 +117,26 @@ public class KitsMenu implements Listener {
 	}
 
 	private static void applySelectedKitEnchantment(ItemStack item, ItemMeta meta) {
-		item.addUnsafeEnchantment(Enchantment.LUCK, 1);
+		item.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+	}
+
+	private static String prettifyMaterialName(String name) {
+		final String[] words = name.toLowerCase(java.util.Locale.ROOT).split("_");
+		final StringBuilder builder = new StringBuilder();
+		for (final String word : words) {
+			if (word.isEmpty())
+				continue;
+			if (builder.length() > 0)
+				builder.append(' ');
+			builder.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+		}
+		return builder.toString();
 	}
 
 	private static void addKitItemsToLore(Kit kit, List<String> lore) {
 		for (ItemStack i : kit.getItems()) {
-			String itemName = WordUtils.capitalizeFully(i.getType().name().replace("_", " "));
+			String itemName = prettifyMaterialName(i.getType().name());
 			if (i.getAmount() > 1) itemName += " x" + i.getAmount();
 			lore.add(MessageUtils.color("&8" + itemName));
 		}

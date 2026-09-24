@@ -26,13 +26,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -82,7 +80,7 @@ public class MainCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String cmd, String[] args) {
 		try {
 			if (args.length <= 0) {
-				sender.sendMessage(MessageUtils.color("&a&lSkyWars &e- /sw help"));
+				sender.sendMessage(MessageUtils.color("&b&lMSkyWars &e- /sw help"));
 				return true;
 			}
 			Player player = null;
@@ -374,7 +372,7 @@ public class MainCommand implements CommandExecutor {
 						public void run() {
 							final Location l = arena.getVectorInArena(new Vector(a, a, a));
 							final Block b = l.getBlock();
-							player1.sendBlockChange(l, b.getType(), b.getData());
+							player1.sendBlockChange(l, b.getBlockData());
 						}
 					}, count);
 				}
@@ -398,9 +396,9 @@ public class MainCommand implements CommandExecutor {
 				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
 					return true;
 				final Block block = SkywarsUtils.getTargetBlock(player, 10);
-				if (block != null)
-					block.setData((byte) (block.getData() + 1));
-				player.sendMessage("data: " + block.getData());
+				if (block == null)
+					return true;
+				player.sendMessage("block: " + block.getType() + " " + block.getBlockData().getAsString());
 			} else if (args[0].equalsIgnoreCase("metadata")) {
 				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
 					return true;
@@ -410,25 +408,6 @@ public class MainCommand implements CommandExecutor {
 				for (final MetadataValue value : block.getMetadata("facing")) {
 					player.sendMessage("data: " + value.asString());
 				}
-			} else if (args[0].equalsIgnoreCase("setdata")) {
-				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
-					return true;
-				final Block block = SkywarsUtils.getTargetBlock(player, 10);
-				if (block == null)
-					return true;
-				if (args[1] == null)
-					return true;
-				block.setData(Byte.parseByte(args[1]));
-			} else if (args[0].equalsIgnoreCase("setmetadata")) {
-				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
-					return true;
-				final String newmeta = args[1];
-				if (newmeta == null)
-					return true;
-				final Block block = SkywarsUtils.getTargetBlock(player, 10);
-				if (block == null)
-					return true;
-				block.setData(SchematicHandler.getHorizontalIndex(newmeta, Byte.parseByte(args[2])));
 			} else if (args[0].equalsIgnoreCase("loadschematic")) {
 				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
 					return true;
@@ -462,7 +441,7 @@ public class MainCommand implements CommandExecutor {
 							MainCommand.this.cancelTimer();
 					}
 				}, 0L, 1L);
-				Skywars.get().NMS().sendParticles(player, "EXPLOSION_HUGE", 0);
+				Skywars.get().NMS().sendParticles(player, "EXPLOSION_EMITTER", 1);
 			} else if (args[0].equalsIgnoreCase("worldname")) {
 				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
 					return true;
@@ -518,16 +497,17 @@ public class MainCommand implements CommandExecutor {
 					return true;
 				final Block block = SkywarsUtils.getTargetBlock(player, 5);
 				ChestManager.fillChest(block.getLocation(), false);
-			} else if (args[0].equalsIgnoreCase("set")) {
+			} else if (args[0].equalsIgnoreCase("setblock")) {
 				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
 					return true;
 				final Block block = SkywarsUtils.getTargetBlock(player, 5);
-				final MaterialData data = new MaterialData(block.getType(), Byte.parseByte(args[1]));
-				Skywars.get().sendDebugMessage("mat data: " + data);
-				final BlockState state = block.getState();
-				Skywars.get().sendDebugMessage(" block state: " + state.getData().getData());
-				state.setData(data);
-				state.update();
+				final org.bukkit.Material material = org.bukkit.Material.matchMaterial(args[1]);
+				if (material == null || !material.isBlock()) {
+					sender.sendMessage("Unknown block: " + args[1]);
+					return true;
+				}
+				block.setType(material, true);
+				sender.sendMessage("Set block to: " + material);
 			} else if (args[0].equalsIgnoreCase("resetcases")) {
 				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
 					return true;

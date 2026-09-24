@@ -13,8 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import java.io.File;
@@ -152,7 +150,7 @@ public enum SchematicHandler {
 						skipped.add((int) blocks[index]);
 						continue;
 					}
-					if (XMaterial.isNewVersion()) {
+					if (true) { // Paper 1.21.x: siempre version moderna
 						// 1.13+ method for setting blocks
 						String name = null;
 						switch (id) {
@@ -202,9 +200,9 @@ public enum SchematicHandler {
 										e.printStackTrace();
 									}
 								} else {
-									final BlockState state = block.getState();
-									state.setData(new MaterialData(mat, blockData[index]));
-									state.update();
+									// Paper 1.21.x: setType() ya aplico el material;
+									// los data values legacy no existen en la API moderna.
+									block.getState().update();
 								}
 							} else {
 								Skywars.get().sendMessage("null material for %s, %s:%s", name, id, blockData[index]);
@@ -213,10 +211,8 @@ public enum SchematicHandler {
 							Skywars.get().sendMessage("null name for %s:%s", id, blockData[index]);
 						}
 					} else {
-						// 1.8 - 1.12 method for setting blocks
-						if (id == 54)
-							Skywars.get().sendDebugMessage("data for chest: " + blockData[index]);
-						block.setTypeIdAndData(id, blockData[index], true);
+						// Paper 1.21.x: el formato 1.8 con IDs numericos ya no esta soportado
+						Skywars.get().sendDebugMessage("Skipping legacy 1.8 block id: " + id);
 					}
 				}
 			}
@@ -351,11 +347,8 @@ public enum SchematicHandler {
 
 	@SuppressWarnings("deprecation")
 	public static void pasteSchematic(Location loc, Schematic schematic) {
-		if (XMaterial.isNewVersion()) {
-			Skywars.get().sendMessage("Can't paste schematic: schematic files are not supported in 1.13+");
-			return;
-		}
-
+		// Pegado de depuracion para .schem modernos (Sponge v2/v3) en Paper 1.21.x.
+		// Solo coloca el material base; las propiedades de BlockData se omiten.
 		final World world = loc.getWorld();
 		final byte[] blocks = schematic.getBlocks();
 		final byte[] blockData = schematic.getData();
@@ -382,11 +375,12 @@ public enum SchematicHandler {
 					// schem file
 					if (dataMap != null && blockData == null) {
 						final String data = dataMap.get(id);
+						if (data == null || !data.contains("minecraft:")) {
+							skipped.add(id);
+							continue;
+						}
 						final String matName = data.split("minecraft:")[1].split("\\[")[0];
-						String[] metadata = {};
-						if (data.endsWith("]"))
-							metadata = data.split("\\[")[1].split("\\]")[0].split(",");
-						final XMaterial xmat = XMaterial.matchXMaterial(matName).get();
+						final XMaterial xmat = XMaterial.matchXMaterial(matName).orElse(null);
 						if (xmat == null) {
 							Skywars.get().sendDebugMessage("Could not get material for: " + matName);
 							continue;
@@ -401,22 +395,11 @@ public enum SchematicHandler {
 						block.setType(mat);
 						// Skywars.get().sendDebugMessage("setting block at " + block.getLocation() + "
 						// to " + mat);
-						for (final String m : metadata) {
-							// final String key = m.split("=")[0];
-							final String value = m.split("=")[1];
-							block.setData(getHorizontalIndex(value, (byte) 2));
-							// Skywars.get().sendDebugMessage("setting metadata of " + mat + " to: " +
-							// String.join(", ",
-							// metadata));
-							// block.setMetadata(, new FixedMetadataValue(Skywars.get(), m.split("=")[1]));
-						}
+						// Paper 1.21.x: las propiedades de orientacion (BlockData)
+						// se omiten en este pegado de depuracion.
 					} else {
-						// schematic file
-						if (blocks[index] < 0) {
-							skipped.add((int) blocks[index]);
-							continue;
-						}
-						block.setTypeIdAndData(id, blockData[index], true);
+						// Paper 1.21.x: el formato legacy con IDs numericos ya no esta soportado
+						skipped.add(id);
 					}
 				}
 			}
