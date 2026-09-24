@@ -33,6 +33,7 @@ public class SkywarsMap {
 	String worldName;
 	HashMap<Integer, Vector> spawns = new HashMap<>();
 	HashMap<Integer, Vector> chests = new HashMap<>();
+	HashMap<Integer, Vector> luckyBlocks = new HashMap<>();
 
 	public SkywarsMap(String name, int teamSize) {
 		this.name = name;
@@ -308,5 +309,50 @@ public class SkywarsMap {
 
 	public HashMap<Integer, Vector> getChests() {
 		return this.chests;
+	}
+
+	public HashMap<Integer, Vector> getLuckyBlocks() {
+		return this.luckyBlocks;
+	}
+
+	/**
+	 * Registra los LuckyBlocks del mapa escaneando el mundo en busca del
+	 * material configurado (igual que los beacons para los spawns).
+	 * Guarda las posiciones en la config del mapa (luckyblock.N).
+	 *
+	 * @return cantidad de luckyblocks registrados
+	 */
+	public int calculateLuckyBlocks() {
+		Skywars.get().sendDebugMessage("calculating luckyblocks for map: " + this.getName());
+		this.luckyBlocks.clear();
+
+		final Arena arena = ArenaManager.getArenaByMap(this, true);
+		if (arena == null || arena.getWorld() == null) {
+			Skywars.get().sendDebugMessage("could not calculate luckyblocks: arena world not loaded");
+			return 0;
+		}
+
+		final Material luckyMaterial = Skywars.get().getLuckyBlockManager().getBlockMaterial();
+		for (final Block block : arena.getAllBlocksInMap(luckyMaterial)) {
+			final Vector vector = block.getLocation().toVector();
+			this.luckyBlocks.put(this.luckyBlocks.size(), vector);
+			Skywars.get().sendDebugMessage("Added luckyblock for map %s at location: %s", this.getName(),
+					vector);
+		}
+
+		final YamlConfiguration config = this.getConfig();
+		config.set("luckyblock", null);
+		int i = 0;
+		for (final Vector vector : this.luckyBlocks.values()) {
+			config.set("luckyblock." + i + ".x", vector.getX());
+			config.set("luckyblock." + i + ".y", vector.getY());
+			config.set("luckyblock." + i + ".z", vector.getZ());
+			i++;
+		}
+
+		saveConfig();
+		Skywars.get().sendDebugMessage("Saved %s luckyblocks in config: %s", this.luckyBlocks.size(),
+				this.getName());
+		return this.luckyBlocks.size();
 	}
 }

@@ -164,10 +164,42 @@ public class LuckyBlockManager {
 			{2, 1, 0}, {-2, 1, 0}, {0, 1, 2}, {0, 1, -2}, {2, 1, 2}, {-2, 1, -2}
 	};
 
-	/** Coloca LuckyBlocks en cada isla al empezar la partida. */
+	/**
+	 * Activa los LuckyBlocks al empezar la partida.
+	 *
+	 * <p>Primero usa las posiciones registradas en la config del mapa
+	 * (calculadas con /sw calculateluckyblocks o el menu de config,
+	 * igual que los beacons para los spawns). Los bloques ya existen en
+	 * la copia del mundo, solo se registran para detectar su rotura.</p>
+	 *
+	 * <p>Si el mapa no tiene posiciones registradas, genera bloques
+	 * automaticamente en cada isla (luckyblocks.per_island).</p>
+	 */
 	public void spawnInArena(Arena arena) {
 		if (!this.enabled || arena == null || arena.getWorld() == null)
 			return;
+
+		final HashMap<Integer, org.bukkit.util.Vector> registered = arena.getMap().getLuckyBlocks();
+		if (registered != null && !registered.isEmpty()) {
+			int tracked = 0;
+			for (final org.bukkit.util.Vector vec : registered.values()) {
+				final Location loc = arena.getVectorInArena(vec);
+				if (loc == null || loc.getWorld() == null)
+					continue;
+				if (loc.getBlock().getType() != this.blockMaterial) {
+					Skywars.get().sendDebugMessage(
+							"Registered luckyblock missing in world at %s (expected %s)", loc,
+							this.blockMaterial);
+					continue;
+				}
+				track(loc);
+				tracked++;
+			}
+			Skywars.get().sendDebugMessage("Tracking %s registered luckyblocks for map %s", tracked,
+					arena.getMap().getName());
+			return;
+		}
+
 		final int count = Math.max(0, Math.min(this.perIsland, ISLAND_OFFSETS.length));
 		for (final org.bukkit.util.Vector spawn : arena.getMap().getSpawns().values()) {
 			final Location base = arena.getVectorInArena(spawn);

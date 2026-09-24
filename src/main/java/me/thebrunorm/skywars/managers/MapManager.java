@@ -184,6 +184,22 @@ public class MapManager {
 			}
 		}
 
+		if (mapConfig.get("luckyblock") == null) {
+			Skywars.get().sendDebugMessage("Found no luckyblocks when loading map: %s", map.getName());
+		} else {
+			Skywars.get().sendDebugMessage("Loading luckyblocks for map: %s", map.getName());
+			for (final String key : mapConfig.getConfigurationSection("luckyblock").getKeys(false)) {
+				final int i = Integer.parseInt(key);
+				if (mapConfig.get(String.format("luckyblock.%s", i)) == null)
+					continue;
+				final double x = mapConfig.getDouble(String.format("luckyblock.%s.x", i));
+				final double y = mapConfig.getDouble(String.format("luckyblock.%s.y", i));
+				final double z = mapConfig.getDouble(String.format("luckyblock.%s.z", i));
+				final Vector vector = new Vector(x, y, z);
+				map.getLuckyBlocks().put(i, vector);
+			}
+		}
+
 		this.maps.add(map);
 		Skywars.get().sendDebugMessage("&eLoaded map: &a%s", map.getName());
 	}

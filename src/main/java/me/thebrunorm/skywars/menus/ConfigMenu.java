@@ -45,6 +45,7 @@ public class ConfigMenu implements Listener {
 	final static String clearName = "&c&lClear";
 	final static String teleportName = "&6&lTeleport";
 	final static String chestsName = "&6&lFill chests";
+	final static String calculateLuckyBlocksName = "&6&lCalculate luckyblocks";
 	final File worldsFolder = new File(Skywars.worldsPath);
 
 	static void addItemToInventory(Inventory inv, Material mat, int slot, String name, String... loreLines) {
@@ -82,6 +83,11 @@ public class ConfigMenu implements Listener {
 		String currentWorldFile = currentMap.getWorldName();
 		if (currentWorldFile == null)
 			currentWorldFile = "none";
+
+		InventoryUtils.addItem(inventory, Material.SPONGE, 8, calculateLuckyBlocksName,
+				"&eSet luckyblocks based on sponges placed on the map",
+				"&eCurrent luckyblocks: &b" + currentMap.getLuckyBlocks().size(),
+				"&cThis will override current luckyblocks.");
 
 		InventoryUtils.addItem(inventory, XMaterial.GLASS.parseMaterial(), 9, regenerateCasesName,
 				"&eCurrent spawns: " + currentMap.getSpawns().size());
@@ -153,6 +159,16 @@ public class ConfigMenu implements Listener {
 			else player.sendMessage(MessageUtils.color(
 					"&aSuccessfully &bcalculated &aand &bsaved &6%s spawns&a.",
 					currentMap.getSpawns().size()));
+			return;
+		}
+
+		if (name.equals(MessageUtils.color(calculateLuckyBlocksName))) {
+			final int found = currentMap.calculateLuckyBlocks();
+			if (found <= 0)
+				player.sendMessage(MessageUtils.color("&cNo luckyblocks found in the arena. Nothing changed."));
+			else player.sendMessage(MessageUtils.color(
+					"&aSuccessfully &bcalculated &aand &bsaved &6%s luckyblocks&a.", found));
+			UpdateInventory(player);
 			return;
 		}
 

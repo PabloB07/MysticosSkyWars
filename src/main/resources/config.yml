@@ -91,9 +91,12 @@ souls:
   kill: 1
 
 # LuckyBlocks de MSkyWars (ver luckyblocks.yml para la lista de sorpresas)
+# Para posiciones fijas por mapa (como los beacons de spawns): coloca bloques
+# del material de luckyblocks.yml en el mundo del mapa y ejecuta
+# /sw calculateluckyblocks <mapa> o el boton del menu /sw config.
 luckyblocks:
   enabled: true
-  # bloques que aparecen en cada isla al empezar la partida
+  # bloques automaticos por isla SOLO si el mapa no tiene posiciones registradas
   per_island: 3
   # luckyblocks extra en el inventario al empezar (0 = ninguno)
   give_on_start: 0

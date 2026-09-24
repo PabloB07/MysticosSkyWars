@@ -547,6 +547,18 @@ public class MainCommand implements CommandExecutor {
 				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
 					return true;
 				map.calculateSpawns();
+			} else if (args[0].equalsIgnoreCase("calculateluckyblocks")) {
+				if (CommandsUtils.lacksPermission(sender, "skywars.admin"))
+					return true;
+				if (map == null) {
+					sender.sendMessage(MessageUtils.get("NO_MAP"));
+					return true;
+				}
+				final int found = map.calculateLuckyBlocks();
+				if (found <= 0)
+					sender.sendMessage(MessageUtils.color("&cNo luckyblocks found. Nothing changed."));
+				else sender.sendMessage(MessageUtils.color(
+						"&aSuccessfully &bcalculated &aand &bsaved &6%s luckyblocks&a.", found));
 			} else if (args[0].equalsIgnoreCase("joined")) {
 				sender.sendMessage(Skywars.get().getPlayerArena(player) != null ? "joined" : "not joined");
 			} else if (args[0].equalsIgnoreCase("case")) {

@@ -55,9 +55,8 @@ public class LuckyBlockListener implements Listener {
 		if (!manager.isLuckyBlockAt(loc))
 			return;
 		if (block.getType() != manager.getBlockMaterial()) {
-			// El bloque tracked ya fue reemplazado (explosion, otro plugin...):
-			// limpiar el registro sin premio ni borrar nada.
-			manager.consume(loc);
+			// La posicion registrada ya no tiene un LuckyBlock (explosion,
+			// mapa editado...): no tocar nada y mantener el registro.
 			return;
 		}
 
